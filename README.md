@@ -33,27 +33,7 @@
 - **FastAPI 後端** (`api/`)：策略 CRUD、Gemini 自動生策略、用任一策略執行 watchlist
 - **Next.js 前端** (`web/`)：策略庫列表、手動建立表單、AI 生策略（自然語言 → JSON）、Dashboard
 
-### 介面預覽
-
-**Dashboard — 一鍵執行今日選股**
-挑一個策略、按下執行，即時看到 watchlist 每檔的綜合分與 BUY / WATCH / SKIP 結果，並標出市場氛圍。
-
-![Dashboard](assets/dashboard.jpg)
-
-**策略庫 — 所有策略集中管理**
-每個策略一張卡片，列出 EPS / ROE 門檻、總分門檻、持有日等關鍵參數，可直接「跑一次」或新增。
-
-![策略庫](assets/strategy-library.jpg)
-
-**手動建立策略 — 全參數化表單**
-基本面門檻、回測與訊號、風險（停利 / 停損）、評分加權、技術訊號開關全部可調，所有欄位都有預設值。
-
-![手動建立策略](assets/strategy-create.jpg)
-
-**AI 生策略 — 用一句話生出參數**
-輸入「我想做短線動能，5–10 天持有，停損 -5%、停利 +15%」這類自然語言，Gemini 自動生出對應策略 JSON，可再微調後存進策略庫。
-
-![AI 生策略](assets/strategy-ai.jpg)
+> 介面預覽截圖在最下方 → [🖼️ Web UI 介面預覽](#-web-ui-介面預覽)
 
 ### 啟動方式（兩個 terminal）
 
@@ -458,6 +438,30 @@ Private repo 每月免費 2000 分鐘，這個 workflow 每次約 2 分鐘，每
 下次排程自動納入或排除。
 
 </details>
+
+---
+
+## 🖼️ Web UI 介面預覽
+
+**Dashboard — 一鍵執行今日選股**
+挑一個策略、按下執行，即時看到 watchlist 每檔的綜合分與 BUY / WATCH / SKIP 結果，並標出市場氛圍。
+
+![Dashboard](assets/dashboard.jpg)
+
+**策略庫 — 所有策略集中管理**
+每個策略一張卡片，列出 EPS / ROE 門檻、總分門檻、持有日等關鍵參數，可直接「跑一次」或新增。
+
+![策略庫](assets/strategy-library.jpg)
+
+**手動建立策略 — 全參數化表單**
+基本面門檻、回測與訊號、風險（停利 / 停損）、評分加權、技術訊號開關全部可調，所有欄位都有預設值。
+
+![手動建立策略](assets/strategy-create.jpg)
+
+**AI 生策略 — 用一句話生出參數**
+輸入「我想做短線動能，5–10 天持有，停損 -5%、停利 +15%」這類自然語言，Gemini 自動生出對應策略 JSON，可再微調後存進策略庫。
+
+![AI 生策略](assets/strategy-ai.jpg)
 
 ---
 
