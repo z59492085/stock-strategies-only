@@ -468,13 +468,19 @@ def _patch_api(monkeypatch, rows_by_call):
 
 
 def test_cache_hit_skips_api(monkeypatch):
-    rows = [[{"date": "2024-01-02", "close": 10}, {"date": "2024-01-03", "close": 11}]]
+    # 新鮮度由 _is_fresh 以 max_date 距今判定（spec §6），故須用「近兩日」資料
+    # 才會被判為新鮮而命中快取。不可用固定過去日期（會被判過期 → 第二次重打 API）。
+    today = pd.Timestamp.now().normalize()
+    d0 = (today - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    d1 = today.strftime("%Y-%m-%d")
+    start = (today - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
+    rows = [[{"date": d0, "close": 10}, {"date": d1, "close": 11}]]
     state = _patch_api(monkeypatch, rows)
-    df1 = cache.fetch_finmind_cached("TaiwanStockPrice", "2330", "2024-01-01")
+    df1 = cache.fetch_finmind_cached("TaiwanStockPrice", "2330", start)
     assert len(df1) == 2
     assert state["n"] == 1
     # 第二次：新鮮快取 → 不打 API
-    df2 = cache.fetch_finmind_cached("TaiwanStockPrice", "2330", "2024-01-01")
+    df2 = cache.fetch_finmind_cached("TaiwanStockPrice", "2330", start)
     assert state["n"] == 1  # 沒再呼叫
     assert len(df2) == 2
 
