@@ -92,3 +92,14 @@ def test_long_format_rows_survive_incremental(monkeypatch):
     assert len(df[df["type"] == "EPS"]) == 1
     assert len(df[df["type"] == "ROE"]) == 1
     assert len(df) == 2   # 兩 type 都在，沒被砍成一列
+
+
+def test_is_fresh_tolerates_weekend():
+    """price 快取停在週五，週一檢查應視為新鮮（用工作日算，週末不算過期）。
+    否則每個週一都會把整批 watchlist 重抓 → 撞 FinMind 額度。"""
+    cache._write_cache("TaiwanStockPrice", "TEST_WK",
+                       pd.DataFrame({"date": pd.to_datetime(["2026-06-12"])}))  # 週五
+    monday = pd.Timestamp("2026-06-15")     # 隔週末，0 個交易日
+    assert cache._is_fresh("TaiwanStockPrice", "TEST_WK", None, today=monday) is True
+    tuesday = pd.Timestamp("2026-06-16")    # 隔了週一(1個交易日)，該增量更新
+    assert cache._is_fresh("TaiwanStockPrice", "TEST_WK", None, today=tuesday) is False

@@ -11,6 +11,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -146,7 +147,8 @@ def _write_cache(dataset: str, data_id: str, df: pd.DataFrame) -> None:
     _meta_path(dataset, data_id).write_text(json.dumps(meta))
 
 
-def _is_fresh(dataset: str, data_id: str, fresh_days: int | None) -> bool:
+def _is_fresh(dataset: str, data_id: str, fresh_days: int | None,
+              today: pd.Timestamp | None = None) -> bool:
     mp = _meta_path(dataset, data_id)
     if not mp.exists():
         return False
@@ -158,7 +160,11 @@ def _is_fresh(dataset: str, data_id: str, fresh_days: int | None) -> bool:
     if pd.isna(max_date):
         return False
     days = fresh_days if fresh_days is not None else CACHE_FRESH_DAYS[_freq_of(dataset)]
-    return (pd.Timestamp.now().normalize() - max_date.normalize()).days <= days
+    today = (today or pd.Timestamp.now()).normalize()
+    # 用「工作日」數判斷新鮮度：週五抓的快取週一檢查＝1 個交易日(<=daily門檻1)，視為新鮮，
+    # 不會因週末把整批資料判過期而觸發大量增量抓取（省 FinMind 額度）。
+    gap = int(np.busday_count(max_date.normalize().date(), today.date()))
+    return gap <= days
 
 
 def _api_to_df(payload: dict) -> pd.DataFrame:
