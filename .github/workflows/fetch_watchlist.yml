@@ -3,8 +3,7 @@ name: Fetch Top 100 Stocks to Google Sheet
 on:
   schedule:
     # 台灣時間 14:00 = UTC 06:00
-    - cron: "0 6 * * 1-5"
-
+    - cron: "15 6 * * 1-5"
   workflow_dispatch: # 允許隨時在 GitHub 網頁上手動點擊測試
 
 jobs:
