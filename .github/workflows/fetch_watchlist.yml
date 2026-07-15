@@ -1,0 +1,32 @@
+name: Fetch Top 100 Stocks to Google Sheet
+
+on:
+  schedule:
+    # 台灣時間每天下午 15:18 分自動執行（避開整點，最不易延遲與塞車）
+    - cron: "18 7 * * 1-5"
+
+  workflow_dispatch: # 允許隨時在 GitHub 網頁上手動點擊測試
+
+jobs:
+  run-fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run Fetch Script
+        env:
+          # 這裡會自動對接你 GitHub 已經設定好的 Secrets 安全金鑰
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_CREDS_JSON: ${{ secrets.GOOGLE_CREDS_JSON }}
+        run: uv run python fetch_top_100.py
